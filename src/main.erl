@@ -1,3 +1,5 @@
+% Authors : De Waele Theo and Van Droogenbroeck David
+
 -module(main).
 
 -import(io,[fwrite/2, fwrite/1]).
