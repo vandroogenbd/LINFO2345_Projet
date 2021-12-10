@@ -14,25 +14,25 @@ server(PIDs) ->
 server(PIDs, Elected_Node, Last_Pusher, Last_Block) ->
     receive
         {elected_node, New_Elected_Node} ->
-            fwrite("Je suis le server ~p et j'ai recu le message ~p.\n", [self(), {elected_node, New_Elected_Node}]),
+            fwrite("Server ~p recieved message ~p.\n", [self(), {elected_node, New_Elected_Node}]),
             PID_Elected = nth(New_Elected_Node + 1, PIDs),
             PID_Elected ! {generate_block},
             server(PIDs, PID_Elected, Last_Pusher, Last_Block);
 
         {generated_claim, Generated_Claim} ->
-            fwrite("Je suis le server ~p et j'ai recu le message ~p.\n", [self(), {generated_claim, Generated_Claim}]),
+            fwrite("Server ~p recieved message ~p.\n", [self(), {generated_claim, Generated_Claim}]),
             Last_Pusher ! {receive_claim, Generated_Claim},
             server(PIDs, Elected_Node, Last_Pusher, Last_Block);
 
         {generated_block, New_Block} ->
-            fwrite("Je suis le server ~p et j'ai recu le message ~p.\n", [self(), {generated_block, New_Block}]),
+            fwrite("Server ~p recieved message ~p.\n", [self(), {generated_block, New_Block}]),
             [Node ! {update_last, Elected_Node, New_Block} || Node <- PIDs],
             if
                 element(2, New_Block) < 5 ->
                     [Node ! {generate_claim} || Node <- PIDs],
                     server(PIDs, Elected_Node, Elected_Node, New_Block);
                 element(2, New_Block) >= 5 ->
-                    fwrite("Server fini.\n"),
+                    fwrite("Server terminated.\n"),
                     [Node ! terminate || Node <- PIDs]
             end
             

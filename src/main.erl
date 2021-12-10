@@ -7,7 +7,7 @@
 
 run(N) ->
     PIDs = start_nodes(1, N, fun() -> spawn(pos_node, pos_node_loop, [self(), [], -1, -1, []]) end),
-    fwrite("Noeuds lances ~p\n", [PIDs]),
+    fwrite("Generated nodes ~p\n\n", [PIDs]),
     server(PIDs).
 
 start_nodes(N, N, F) -> [F()]; 
