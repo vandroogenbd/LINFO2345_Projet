@@ -8,7 +8,7 @@
 run(N) ->
     % Change this value to change the amout of blocks the network will generate before stopping
     Max_Blocks = 3,
-    % Set this value to true to have a simple trace using
+    % Set this value to true to have a simple trace using prints
     Trace = false,
 
     PIDs = start_nodes(1, N, fun() -> spawn(pos_node, pos_node_loop, [self(), [], -1, -1, [], Trace]) end),
