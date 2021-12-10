@@ -1,18 +1,14 @@
 -module(main).
 
--import(lists,[append/2]).
 -import(io,[fwrite/2, fwrite/1]).
+-import(server,[server/1]).
 
 -export([run/1]).
 
 run(N) ->
-    spawn(start_nodes(N, [])).
+    PIDs = start_nodes(1, N, fun() -> spawn(pos_node, pos_node_loop, [self(), [], -1, -1, []]) end),
+    fwrite("Noeuds lances ~p\n", [PIDs]),
+    server(PIDs).
 
-start_nodes(0, Array) ->
-    Array;
-start_nodes(N, Array) ->
-    pid = spawn(pos_node, pos_node_loop, [N]),
-    fwrite("J'ai lancé le noeud ~p.\n", [N]),
-    temp = append(Array, [pid]),
-    pid ! print_name,
-    start_nodes(N - 1, temp).
+start_nodes(N, N, F) -> [F()]; 
+start_nodes(I, N, F) -> [F()|start_nodes(I+1, N, F)].
